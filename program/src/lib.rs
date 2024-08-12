@@ -1,12 +1,11 @@
 use anchor_lang::{prelude::*, solana_program};
-use std::mem::size_of;
 
 pub mod constant;
 pub mod states;
 
-use crate::{constant::*, states::*};
+use crate::states::*;
 
-declare_id!("Hewk4zP3LATWU6QaDqKq2K7zAkpS6nUYogkXfC7fS7wM");
+declare_id!("7CCMb9Xa1hbVaD1JAsMmkRsekxMRvtqVa4tprQaJ5vxS");
 
 #[program]
 pub mod workbee {
@@ -22,12 +21,10 @@ pub mod workbee {
         let new_task = &mut ctx.accounts.task_account;
         let authority = &ctx.accounts.authority;
 
-        let sol_amount_in_lamports = prize_amount * ONE_SOL_IN_LAMPORTS;
-
         let transfer_ix = solana_program::system_instruction::transfer(
             &authority.key(),
             &new_task.key(),
-            sol_amount_in_lamports,
+            prize_amount,
         );
 
         solana_program::program::invoke(
@@ -41,26 +38,23 @@ pub mod workbee {
         new_task.category = category;
         new_task.created_at = ctx.accounts.clock.unix_timestamp;
         new_task.is_completed = false;
-        new_task.prize_amount = sol_amount_in_lamports;
+        new_task.prize_amount = prize_amount;
 
         Ok(())
     }
 }
 
 #[derive(Accounts)]
-#[instruction()]
 pub struct AddTask<'info> {
-    #[account(mut)]
-    pub authority: Signer<'info>,
-
     #[account(
         init,
-        seeds = [TASK_TAG, authority.key().as_ref()],
-        bump,
         payer = authority,
-        space = size_of::<Task>() + 8
+        space = Task::LEN
     )]
-    pub task_account: Box<Account<'info, Task>>,
+    pub task_account: Account<'info, Task>,
+
+    #[account(mut)]
+    pub authority: Signer<'info>,
 
     pub system_program: Program<'info, System>,
 
