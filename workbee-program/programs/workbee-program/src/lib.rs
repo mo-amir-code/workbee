@@ -5,7 +5,7 @@ pub mod states;
 
 use crate::states::*;
 
-declare_id!("7CCMb9Xa1hbVaD1JAsMmkRsekxMRvtqVa4tprQaJ5vxS");
+declare_id!("J1msWZSGkomYUffNzUkxBYqmU6iw2UA2QTEnG2PuTvkx");
 
 #[program]
 pub mod workbee {
