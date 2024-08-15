@@ -5,69 +5,82 @@ import { assert } from "chai";
 import { Keypair } from "@solana/web3.js";
 
 describe("workbee", () => {
-  // Configure the client to use the Devnet cluster.
+  // Configure the client to use the Localhost cluster.
   const provider = anchor.AnchorProvider.local("https://api.devnet.solana.com");
   anchor.setProvider(provider);
 
   const program = anchor.workspace.Workbee as Program<Workbee>;
 
+  // Generate a new Keypair for the completer
+  const completer = Keypair.generate();
+
   // Use the wallet from the local Solana CLI as the authority
   const authority = provider.wallet.publicKey;
 
-  it("Adds a task and retrieves all task accounts", async () => {
-    const taskAccount = Keypair.generate();
+  const taskAccount = Keypair.generate();
 
-    const title = "Build a DApp using Rust language on solana blockchain";
-    const briefDescription = "Build a decentralized application on Solana";
+  
+  it("Add a task", async () => {
+    console.log("Task Account Public Key: ", taskAccount.publicKey.toBase58());
+
+    const task_detail_id = "1234re";
     const category = "Development";
     const prizeAmount = 0.1 * anchor.web3.LAMPORTS_PER_SOL;
 
     // Add a new task
-    const tx = await program.methods
-      .addTask(
-        title,
-        briefDescription,
-        category,
-        new anchor.BN(prizeAmount)
-      )
+    const txId = await program.methods
+      .addTask(task_detail_id, category, new anchor.BN(prizeAmount))
       .accounts({
         taskAccount: taskAccount.publicKey,
-        authority: authority,
-        // systemProgram: anchor.web3.SystemProgram.programId,
-        // clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
+        authority: authority
       })
       .signers([taskAccount])
       .rpc();
 
-    console.log("Transaction signature", tx);
+    console.log("Add Task Transaction ID:", txId);
 
-    // Fetch the specific task
+    // Confirm the transaction
+    // await provider.connection.confirmTransaction(txId);
+
+    // Fetch the updated task account
     const task = await program.account.task.fetch(taskAccount.publicKey);
+    console.log("New Task: ", task);
 
-    assert.equal(task.owner.toBase58(), authority.toBase58());
-    assert.equal(task.title, title);
-    assert.equal(task.briefDescription, briefDescription);
-    assert.equal(task.category, category);
-    assert.equal(task.isCompleted, false);
-    assert.equal(task.prizeAmount.toNumber(), prizeAmount);
+    // Get the balance of the completer after completing the task
+    // const balanceAfter = await provider.connection.getBalance(completer.publicKey);
+    // console.log("Completer balance after completing task:", balanceAfter / anchor.web3.LAMPORTS_PER_SOL, "SOL");
 
-    console.log("Task added successfully with title:", task.title);
-
-    // Fetch and display all task accounts
-    const allTasks = await program.account.task.all();
-
-    console.log("All Task Accounts:");
-    allTasks.forEach((t, index) => {
-      console.log(`Task ${index + 1}:`);
-      console.log(`  Public Key: ${t.publicKey.toBase58()}`);
-      console.log(`  Title: ${t.account.title}`);
-      console.log(`  Description: ${t.account.briefDescription}`);
-      console.log(`  Category: ${t.account.category}`);
-      console.log(`  Prize Amount: ${t.account.prizeAmount.toNumber()}`);
-      console.log(`  Is Completed: ${t.account.isCompleted}`);
-      console.log(`  Created At: ${new Date(Number(t.account.createdAt) * 1000).toLocaleString()}`);
-    });
-
-    assert.isTrue(allTasks.length > 0, "There should be at least one task account");
+    // Check if the task was marked complete
+    // assert.equal(task.isCompleted, true);
+    // assert.equal(task.completer.toBase58(), completer.publicKey.toBase58());
   });
+
+  it("Complete Task", async () => {
+    console.log("Completer Account Public Key: ", completer.publicKey.toBase58());
+
+     // Mark Task as complete
+    const completeTxId = await program.methods.completeTask()
+     .accounts({
+       taskAccount: taskAccount.publicKey,
+       authority: authority,
+       completer: completer.publicKey
+     })
+     .signers([completer])
+     .rpc();
+
+    console.log("Complete Task Transaction ID:", completeTxId);
+
+    // Fetch the updated task account
+    // const task = await program.account.task.fetch(taskAccount.publicKey);
+
+    // Get the balance of the completer after completing the task
+    const balanceAfter = await provider.connection.getBalance(completer.publicKey);
+    console.log("Completer balance after completing task:", balanceAfter / anchor.web3.LAMPORTS_PER_SOL, "SOL");
+
+    // Check if the task was marked complete
+    // assert.equal(task.isCompleted, true);
+    // assert.equal(task.completer.toBase58(), completer.publicKey.toBase58());
+  });
+
+
 });

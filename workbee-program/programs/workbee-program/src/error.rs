@@ -6,4 +6,8 @@ pub enum WorkBeeErrors {
     InvalidTaskId,
     #[msg("The provided completer public key is not valid.")]
     InvalidCompleterPubkey,
+    #[msg("Task account does not have sufficient amount.")]
+    InsufficientFunds,
+    #[msg("Task already completed.")]
+    TaskAlreadyCompleted,
 }

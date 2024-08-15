@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 use crate::constant::*;
 
 #[account]
+#[derive(Debug)]
 pub struct Task {
     pub owner: Pubkey,
     pub task_detail_id: String,

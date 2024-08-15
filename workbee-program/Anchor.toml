@@ -8,7 +8,7 @@ skip-lint = false
 workbee_program = "J1msWZSGkomYUffNzUkxBYqmU6iw2UA2QTEnG2PuTvkx"
 
 [registry]
-url = "https://api.apr.dev"
+url = "https://api.devnet.solana.com"
 
 [provider]
 cluster = "devnet"
