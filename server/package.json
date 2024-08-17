@@ -5,12 +5,12 @@
   "main": "src/app.ts",
   "type": "module",
   "scripts": {
-    "start": "node --env-file=.env dist/app.js",
+    "start": "tsc && node --env-file=.env dist/app.js",
     "dev": "nodemon --env-file=.env dist/app.js",
     "build": "tsc",
     "watch": "tsc --watch",
-    "db:generate": "drizzle-kit generate",
-    "db:push": "drizzle-kit push",
+    "db:generate": "tsc && drizzle-kit generate",
+    "db:push": "tsc && drizzle-kit push",
     "db:migrate": "node --env-file=.env ./dist/migrations.js",
     "db:studio": "drizzle-kit studio --port 6000"
   },
