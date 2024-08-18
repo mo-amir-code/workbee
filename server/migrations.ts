@@ -6,10 +6,10 @@ import { DB_URL } from "./src/config/index.js";
 
 async function runMigation() {
     try {
-        console.log("Migation Start....");
+        console.log("Migration Start....");
         const pool = new Pool({connectionString: DB_URL});
         const db = drizzle(pool);
-        await migrate(db, { migrationsFolder: "./src/db/migrations" });
+        await migrate(db, { migrationsFolder: "./dist/src/db/migrations" });
         console.log("Migation was successfull");
         await pool.end();
     } catch (error) {

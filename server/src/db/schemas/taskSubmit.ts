@@ -4,7 +4,6 @@ import {
   pgEnum,
   timestamp,
   serial,
-  integer,
 } from "drizzle-orm/pg-core";
 import { UserTable } from "./user.js";
 import { TaskTable } from "./task.js";
@@ -19,10 +18,10 @@ export const taskSubmitStatusEnum = pgEnum("status", [
 
 export const TaskSubmitTable = pgTable("taskSubmit", {
   id: serial("id").primaryKey(),
-  user: integer("user_id")
+  user: serial("user_id")
     .references(() => UserTable.id)
     .notNull(),
-  task: integer("task_id")
+  task: serial("task_id")
     .references(() => TaskTable.id)
     .notNull(),
   coverLetter: varchar("cover_letter", { length: 255 }).notNull(),

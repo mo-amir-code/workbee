@@ -13,7 +13,14 @@ interface APISuccessType {
     data?: any
 }
 
+interface UserMiddlewareType{
+    id: number,
+    username: string
+    email: string,
+}
+
 export type {
     APIHandlerType,
-    APISuccessType
+    APISuccessType,
+    UserMiddlewareType
 }

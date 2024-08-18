@@ -1,6 +1,5 @@
 import {
   pgTable,
-  uuid,
   varchar,
   pgEnum,
   boolean,
@@ -16,19 +15,18 @@ export const statusEnum = pgEnum("status", ["draft", "published"]);
 export const TaskTable = pgTable("task", {
   id: serial("id").primaryKey(),
   solanaTaskId: varchar("solana_task_id", { length: 255 }),
-  user: uuid("user_id")
+  user: serial("user_id")
     .references(() => UserTable.id)
     .notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   description: varchar("description", { length: 255 }).notNull(),
-  category: integer("category_id").references(() => CategoryTable.id),
+  category: serial("category_id").references(() => CategoryTable.id),
   participants: integer("participants")
-    .array()
-    .references(() => UserTable.id),
+    .array(),
   prizeAmount: integer("prize_amount"),
   isCompleted: boolean("is_completed").notNull().default(false),
-  status: statusEnum("status").notNull().default("draft"),
-  completer: integer("completer").references(() => UserTable.id),
+  status: statusEnum("status").notNull(),
+  completer: serial("completer").references(() => UserTable.id),
   expiryTime: timestamp("expiry_time"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),

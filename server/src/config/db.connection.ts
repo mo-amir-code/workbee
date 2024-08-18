@@ -1,7 +1,8 @@
+import pkg from "pg";
+const { Pool } = pkg;
 import { NodePgDatabase, drizzle } from "drizzle-orm/node-postgres"
-import { Pool } from "pg"
-import * as schema from "./schemas/index.js";
-import { DB_URL } from "src/config/index.js";
+import * as schema from "../db/schemas/index.js";
+import { DB_URL } from "./index.js";
 
 
 const pool = new Pool({

@@ -1,9 +1,11 @@
-const APP_PORT = process.env.APP_PORT;
-const DB_URL = process.env.DB_URL;
-const ENVIRONMENT = process.env.ENVIRONMENT;
+// EXPORTING AFTER IMPORT
+export * from "./env.vars.js";
+export * from "./db.connection.js";
 
 
 
+
+// CORS CONF
 const whitelist = [`*`];
 
 const corsOptions = {
@@ -19,8 +21,5 @@ const corsOptions = {
 
 
 export {
-    APP_PORT,
-    DB_URL,
-    ENVIRONMENT,
-    corsOptions
+    corsOptions,
 }
