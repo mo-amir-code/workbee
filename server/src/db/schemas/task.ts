@@ -14,22 +14,22 @@ export const statusEnum = pgEnum("status", ["draft", "published"]);
 
 export const TaskTable = pgTable("task", {
   id: serial("id").primaryKey(),
-  solanaTaskId: varchar("solana_task_id", { length: 255 }),
-  user: serial("user_id")
+  solanaTaskId: varchar("solanaTaskId", { length: 255 }),
+  user: serial("user")
     .references(() => UserTable.id)
     .notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   description: varchar("description", { length: 255 }).notNull(),
-  category: serial("category_id").references(() => CategoryTable.id),
+  category: serial("category").references(() => CategoryTable.id),
   participants: integer("participants")
     .array(),
   prizeAmount: integer("prize_amount"),
-  isCompleted: boolean("is_completed").notNull().default(false),
+  isCompleted: boolean("isCompleted").notNull().default(false),
   status: statusEnum("status").notNull(),
   completer: serial("completer").references(() => UserTable.id),
-  expiryTime: timestamp("expiry_time"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  expiryTime: timestamp("expiryTime"),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 });
 
 export const tasksRelations = relations(TaskTable, ({ one, many }) => ({

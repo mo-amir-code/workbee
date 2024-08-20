@@ -1,6 +1,7 @@
 // EXPORTING AFTER IMPORT
 export * from "./env.vars.js";
 export * from "./db.connection.js";
+export * from "./send-email.js"
 
 
 

@@ -8,9 +8,9 @@ export const AuthTable = pgTable("auth", {
     user: serial("user").references(() => UserTable.id).notNull(),
     role: roleEnum("role").notNull().default("user"),
     verified: boolean("verified").notNull().default(false),
-    refreshToken: varchar("refresh_token", { length: 255 }),
+    refreshToken: varchar("refreshToken", { length: 255 }),
     otp: varchar("otp", { length: 255 }),
-    otpToken: varchar("otp_token", { length: 255 }),
+    otpToken: varchar("otpToken", { length: 255 }),
 });
 
 

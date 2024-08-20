@@ -18,10 +18,10 @@ export const taskSubmitStatusEnum = pgEnum("status", [
 
 export const TaskSubmitTable = pgTable("taskSubmit", {
   id: serial("id").primaryKey(),
-  user: serial("user_id")
+  user: serial("user")
     .references(() => UserTable.id)
     .notNull(),
-  task: serial("task_id")
+  task: serial("task")
     .references(() => TaskTable.id)
     .notNull(),
   coverLetter: varchar("cover_letter", { length: 255 }).notNull(),

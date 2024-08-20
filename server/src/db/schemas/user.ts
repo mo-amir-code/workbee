@@ -13,7 +13,7 @@ export const UserTable = pgTable("user", {
   name: varchar("name", { length: 255 }).notNull(),
   username: varchar("username", { length: 255 }).notNull().unique(),
   email: varchar("email", { length: 255 }).unique().notNull(),
-  savedTask: integer("saved_task").array(),
+  savedTask: integer("savedTask").array(),
   password: varchar("password", { length: 255 }).notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
