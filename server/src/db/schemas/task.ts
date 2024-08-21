@@ -15,19 +15,19 @@ export const statusEnum = pgEnum("status", ["draft", "published"]);
 export const TaskTable = pgTable("task", {
   id: serial("id").primaryKey(),
   solanaTaskId: varchar("solanaTaskId", { length: 255 }),
-  user: serial("user")
+  user: integer("user")
     .references(() => UserTable.id)
     .notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   description: varchar("description", { length: 255 }).notNull(),
-  category: serial("category").references(() => CategoryTable.id),
+  category: integer("category").references(() => CategoryTable.id).notNull(),
   participants: integer("participants")
-    .array(),
-  prizeAmount: integer("prize_amount"),
+    .array().default([]),
+  prizeAmount: integer("prizeAmount").notNull(),
   isCompleted: boolean("isCompleted").notNull().default(false),
   status: statusEnum("status").notNull(),
-  completer: serial("completer").references(() => UserTable.id),
-  expiryTime: timestamp("expiryTime"),
+  completer: integer("completer").references(() => UserTable.id),
+  expiryTime: timestamp("expiryTime").notNull(),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 });

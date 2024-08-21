@@ -1,4 +1,4 @@
-import { DB_URL } from "./src/config";
+import { DB_URL } from "./dist/src/config";
 
 /** @type { import("drizzle-kit").Config } */
 export default {

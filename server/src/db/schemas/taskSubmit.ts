@@ -4,6 +4,7 @@ import {
   pgEnum,
   timestamp,
   serial,
+  integer,
 } from "drizzle-orm/pg-core";
 import { UserTable } from "./user.js";
 import { TaskTable } from "./task.js";
@@ -18,20 +19,20 @@ export const taskSubmitStatusEnum = pgEnum("status", [
 
 export const TaskSubmitTable = pgTable("taskSubmit", {
   id: serial("id").primaryKey(),
-  user: serial("user")
+  user: integer("user")
     .references(() => UserTable.id)
     .notNull(),
-  task: serial("task")
+  task: integer("task")
     .references(() => TaskTable.id)
     .notNull(),
-  coverLetter: varchar("cover_letter", { length: 255 }).notNull(),
+  coverLetter: varchar("coverLetter", { length: 255 }).notNull(),
   credentials: varchar("credentials").notNull(),
   status: taskSubmitStatusEnum("status").notNull().default("pending"),
-  solanaWalletAddress: varchar("solana_wallet_address", {
+  solanaWalletAddress: varchar("solanaWalletAddress", {
     length: 255,
   }).notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 });
 
 export const taskSubmitRelations = relations(TaskSubmitTable, ({ one }) => ({

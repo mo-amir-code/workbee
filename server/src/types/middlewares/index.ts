@@ -8,8 +8,8 @@ type APIHandlerType = (
 
 interface APISuccessType {
     res: Response,
-    msg: string,
-    statusCode: number,
+    message: string,
+    statusCode?: number,
     data?: any
 }
 

@@ -1,10 +1,10 @@
 import express, { Router } from "express";
-import { loginUser, registerUser } from "../../controllers/v1/index.js";
+import { loginUser, registerUser, sendOTP } from "../../controllers/v1/index.js";
 
 const router: Router = express.Router();
 
 
-router.post("/register", registerUser);
+router.post("/register", registerUser, sendOTP);
 router.post("/login", loginUser);
 
 

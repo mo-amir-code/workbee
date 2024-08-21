@@ -1,5 +1,5 @@
 interface SendEmailOTPType{
-    to: string,
+    to: [string],
     subject: string,
     html: string
 }

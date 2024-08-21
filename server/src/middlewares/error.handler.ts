@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { APIHandlerType } from "../types/middlewares/index.js";
+import { APIHandlerType, APISuccessType } from "../types/middlewares/index.js";
 
 
 class ErrorHandlerClass extends Error {
@@ -30,8 +30,17 @@ const apiHandler = (func:APIHandlerType) => (req:Request, res:Response, next:Nex
     return Promise.resolve(func(req, res, next)).catch(next);
 }
 
+const ok = ({ res, statusCode = 200, message, data }:APISuccessType) => {
+    return res.status(statusCode).json({
+        success: true,
+        message,
+        data
+    });
+}
+
 export {
     ErrorHandlerClass,
     errorHandler,
-    apiHandler
+    apiHandler,
+    ok
 }
