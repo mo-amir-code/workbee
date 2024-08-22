@@ -1,8 +1,8 @@
-import { DB } from "src/config/db.connection.js"
+import { DB } from "../../config/db.connection.js"
 import { UserSavedTaskTable } from "../schemas/index.js"
-import { AddTaskInUserSavedTask, CreateUserSavedTaskType, UserSavedTaskTableType } from "src/types/db-services/index.js"
+import { AddTaskInUserSavedTask, CreateUserSavedTaskType, UserSavedTaskTableType } from "../../types/db-services/index.js"
 import { eq } from "drizzle-orm";
-import { REMOVE_USER_SAVED_TASK } from "src/constants/index.js";
+import { REMOVE_USER_SAVED_TASK } from "../../constants/index.js";
 
 const createUserSavedTask = async ({user}:CreateUserSavedTaskType):Promise<UserSavedTaskTableType> => {
     const savedTasks = await DB.insert(UserSavedTaskTable).values({tasks: [], user }).returning();

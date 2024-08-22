@@ -1,11 +1,11 @@
-import { DB } from "src/config/db.connection.js"
+import { DB } from "../../config/db.connection.js"
 import { AuthTable } from "../schemas/index.js"
 import { AuthTableType, CreateAuthType, DeleteAuthType, UpdateAuthType } from "src/types/db-services/index.js"
 import { eq } from "drizzle-orm";
 
 
-const createAuth = async (authData:CreateAuthType): Promise<AuthTableType> => {
-    const auth = await DB.insert(AuthTable).values(authData).returning();
+const createAuth = async ({user, refreshToken, role = "user"}:CreateAuthType): Promise<AuthTableType> => {
+    const auth = await DB.insert(AuthTable).values({user, refreshToken, role}).returning();
     return auth[0];
 }
 

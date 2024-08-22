@@ -1,7 +1,7 @@
 
 interface CreateAuthType{
     user: number,
-    role: "user" | "admin",
+    role?: "user" | "admin",
     refreshToken?: string | null
 }
 

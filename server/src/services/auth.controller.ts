@@ -1,26 +1,63 @@
-import { COMPANY_NAME } from "src/config/index.js";
-import { IsUserValidWithEmailAndUsernameType, MailTemplateType } from "src/types/controllers/auth.js";
+import { generateHashCode } from "../utils/controllers/auth.js";
+import { COMPANY_NAME } from "../config/index.js";
+import { getUser, getAuth, updateUser } from "../db/services/index.js";
 
+import {
+  IsUserValidWithEmailAndUsernameType,
+  MailTemplateType,
+} from "src/types/controllers/auth.js";
 
-// TODO: Registration logic with email and username verification 
+// TODO: Registration logic with email and username verification
 const isUserValidWithEmailAndUsername = async ({
   username,
-  email
+  email,
 }: {
-  username: string,
-  email:string
+  username: string;
+  email: string;
 }): Promise<IsUserValidWithEmailAndUsernameType> => {
-    let isUsernameValid: boolean = true;
-    let isUserExist: boolean = true;
-    let isUserVerified: boolean = true;
+  const result: IsUserValidWithEmailAndUsernameType = {
+    isUserExist: false,
+    isUsernameValid: false,
+    isUserVerified: false,
+    userId: null,
+  };
 
+  const user = await getUser({ email });
 
-    return {
-        isUserExist,
-        isUserVerified,
-        isUsernameValid,
-        userId: 12
-    };
+  if (user) {
+    result.isUserExist = true;
+    result.userId = user.id;
+  } else {
+    const userWithUsername = await getUser({ username });
+
+    if (userWithUsername) {
+      const usernameAuth = await getAuth({ user: userWithUsername.id });
+      if (usernameAuth) {
+        const hash = await generateHashCode(username);
+        await updateUser({ id: userWithUsername.id, username: hash });
+      }
+    }
+
+    return result;
+  }
+
+  const userAuth = await getAuth({ user: user.id });
+
+  if (user && userAuth?.verified) {
+    result.isUserVerified = true;
+    return result;
+  }
+
+  const userWithUsername = await getUser({ username });
+
+  if (
+    !userWithUsername ||
+    (user && userAuth && userWithUsername.email === user.email)
+  ) {
+    result.isUsernameValid = true;
+  }
+
+  return result;
 };
 
 const createEmailTemplate = ({
@@ -45,13 +82,17 @@ const createEmailTemplate = ({
             </div>
             <div style="padding: 20px; text-align: center;">
                 <p style="margin: 0;">Dear ${name},</p>
-                <p style="margin: 0;">${message} ${link ? `or <a href="${link}">click here</a>` : ''}</p>
+                <p style="margin: 0;">${message} ${
+    link ? ` or <a href="${link}">click here</a>` : ""
+  }</p>
                 <div style="font-size: 24px; font-weight: bold; background-color: #f8f9fa; padding: 10px; border-radius: 8px; margin: 20px 0; display: inline-block; letter-spacing: 2px;">${otp}</div>
                 <p style="margin: 0;">This OTP is valid for the next ${expireTime} minutes.</p>
                 <p style="margin: 0;">If you did not request this OTP, please ignore this email.</p>
             </div>
             <div style="font-size: 12px; color: #777777; text-align: center; padding: 10px; border-top: 1px solid #dddddd; margin-top: 20px;">
-                <p style="margin: 0;">© 2024 ${COMPANY_NAME || 'Your Company'}. All rights reserved.</p>
+                <p style="margin: 0;">© 2024 ${
+                  COMPANY_NAME || "Your Company"
+                }. All rights reserved.</p>
                 <p style="margin: 0;">This is an automated message, please do not reply.</p>
             </div>
         </div>
@@ -62,7 +103,4 @@ const createEmailTemplate = ({
   return temp;
 };
 
-export {
-    isUserValidWithEmailAndUsername,
-    createEmailTemplate
-}
+export { isUserValidWithEmailAndUsername, createEmailTemplate };

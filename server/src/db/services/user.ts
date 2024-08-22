@@ -1,4 +1,4 @@
-import { DB } from "src/config/db.connection.js";
+import { DB } from "../../config/db.connection.js";
 import {
   CreateUserType,
   DeleteUserType,

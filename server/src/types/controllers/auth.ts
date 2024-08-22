@@ -4,7 +4,7 @@ interface IsUserValidWithEmailAndUsernameType{
     isUsernameValid: boolean,
     isUserExist: boolean,
     isUserVerified: boolean,
-    userId: number;
+    userId: number | null;
 }
 
 interface MailTemplateType {

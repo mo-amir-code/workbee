@@ -1,6 +1,6 @@
-import { DB } from "src/config/db.connection.js"
+import { DB } from "../../config/db.connection.js"
 import { CategoryTable } from "../schemas/index.js"
-import { CategoryTableType, CreateCategoryType, DeleteCategoryType, UpdateCategoryType } from "src/types/db-services/index.js"
+import { CategoryTableType, CreateCategoryType, DeleteCategoryType, UpdateCategoryType } from "../../types/db-services/index.js"
 import { eq } from "drizzle-orm";
 
 

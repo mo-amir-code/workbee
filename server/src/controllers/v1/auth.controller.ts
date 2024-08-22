@@ -2,12 +2,13 @@ import { CLIENT_ORIGIN, sendEmailOTP } from "../../config/index.js";
 import { apiHandler, ErrorHandlerClass, ok } from "../..//middlewares/index.js";
 import { loginValidator, registerValidator } from "../../vaildators/index.js";
 import {
+  createAuth,
   createUser,
   getAuth,
   getUser,
   updateAuth,
   updateUser,
-} from "src/db/services/index.js";
+} from "../../db/services/index.js";
 import {
     ACCESS_TOKEN_NAME,
   accessCookieOptions,
@@ -22,20 +23,20 @@ import {
   USER_REGISTRATION_EMAIL_SUBJECT,
   USER_REGISTRATION_MESSAGE,
   USERNAME_ALREADY_EXIST,
-} from "src/constants/index.js";
+} from "../../constants/index.js";
 import {
   generateHashCode,
   generateOTP,
   generateOTPToken,
   generateRefreshAndAccessToken,
   isPasswordCorrect,
-} from "src/utils/controllers/index.js";
+} from "../../utils/controllers/index.js";
 import {
   createEmailTemplate,
   isUserValidWithEmailAndUsername,
-} from "src/services/index.js";
-import { SendEmailOTPType } from "src/types/config.js";
-import { UserTableType } from "src/types/db-services/index.js";
+} from "../../services/index.js";
+import { SendEmailOTPType } from "../../types/config.js";
+import { UserTableType } from "../../types/db-services/index.js";
 
 const registerUser = apiHandler(async (req, res, next) => {
   const data = await registerValidator.validateAsync(req.body);
@@ -44,12 +45,12 @@ const registerUser = apiHandler(async (req, res, next) => {
   const { isUserExist, isUserVerified, isUsernameValid, userId } =
     await isUserValidWithEmailAndUsername(data);
 
-  if (!isUsernameValid) {
-    return next(new ErrorHandlerClass(USERNAME_ALREADY_EXIST, 409));
-  }
-
   if (isUserExist && isUserVerified) {
     return next(new ErrorHandlerClass(USER_ALREADY_EXIST, 409));
+  }
+
+  if (!isUsernameValid && isUserExist) {
+    return next(new ErrorHandlerClass(USERNAME_ALREADY_EXIST, 409));
   }
 
   if (isUserExist) {
@@ -61,6 +62,7 @@ const registerUser = apiHandler(async (req, res, next) => {
   const hashedPassword = await generateHashCode(password);
 
   const newUser = await createUser({ ...data, password: hashedPassword });
+  await createAuth({user: newUser.id});
 
   req.user = newUser;
   return next();

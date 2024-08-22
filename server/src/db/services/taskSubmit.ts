@@ -1,11 +1,11 @@
-import { DB } from "src/config/db.connection.js";
+import { DB } from "../../config/db.connection.js";
 import { TaskSubmitTable } from "../schemas/index.js";
 import {
   CreateTaskSubmitType,
   DeleteTaskSubmitType,
   TaskSubmitTableType,
   UpdateTaskSubmitType,
-} from "src/types/db-services/index.js";
+} from "../../types/db-services/index.js";
 import { eq } from "drizzle-orm";
 
 const createTaskSubmit = async (

@@ -3,9 +3,9 @@ import {
   BCRYPT_SALT_ROUND,
   JWT_SECRET,
   OTP_TOKEN_AGE,
-} from "src/config/index.js";
+} from "../../config/index.js";
 import jwt from "jsonwebtoken";
-import { COOKIE_AGE_15_DAY, COOKIE_AGE_3_DAY } from "src/constants/index.js";
+import { COOKIE_AGE_15_DAY, COOKIE_AGE_3_DAY } from "../../constants/index.js";
 
 const generateHashCode = async (str: string): Promise<string> => {
   const hashedString = await bcrypt.hash(str, BCRYPT_SALT_ROUND);

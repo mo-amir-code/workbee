@@ -1,5 +1,5 @@
 import { CookieOptions } from "express";
-import { ROOT_DOMAIN } from "src/config/index.js";
+import { ROOT_DOMAIN } from "../config/index.js";
 
 const ACCESS_TOKEN_EXPIRY_TIME = "2d";
 const REFRESH_TOKEN_EXPIRY_TIME = "8d";
