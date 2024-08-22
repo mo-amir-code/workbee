@@ -1,11 +1,11 @@
-import {
-  pgTable,
-  varchar,
-  timestamp,
-  serial,
-} from "drizzle-orm/pg-core";
+import { pgTable, varchar, timestamp, serial } from "drizzle-orm/pg-core";
 import { InferSelectModel, relations } from "drizzle-orm";
-import { AuthTable, TaskTable, TaskSubmitTable, UserSavedTaskTable } from "./index.js";
+import {
+  AuthTable,
+  TaskTable,
+  TaskSubmitTable,
+  UserSavedTaskTable,
+} from "./index.js";
 
 export const UserTable = pgTable("user", {
   id: serial("id").primaryKey(),

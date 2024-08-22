@@ -1,6 +1,10 @@
 import { CLIENT_ORIGIN, sendEmailOTP } from "../../config/index.js";
 import { apiHandler, ErrorHandlerClass, ok } from "../..//middlewares/index.js";
-import { loginValidator, registerValidator } from "../../vaildators/index.js";
+import {
+  loginValidator,
+  registerValidator,
+  verifyOTPValidator,
+} from "../../vaildators/index.js";
 import {
   createAuth,
   createUser,
@@ -10,8 +14,10 @@ import {
   updateUser,
 } from "../../db/services/index.js";
 import {
-    ACCESS_TOKEN_NAME,
+  ACCESS_TOKEN_NAME,
   accessCookieOptions,
+  INCORRECT_OTP,
+  OTP_EXPIRED,
   OTP_EXPIRY_IN_MINUTES,
   OTP_SENT_MESSAGE,
   OTP_TOKEN_NAME,
@@ -22,6 +28,7 @@ import {
   USER_NOT_EXIST,
   USER_REGISTRATION_EMAIL_SUBJECT,
   USER_REGISTRATION_MESSAGE,
+  USER_VERIFIED,
   USERNAME_ALREADY_EXIST,
 } from "../../constants/index.js";
 import {
@@ -29,7 +36,8 @@ import {
   generateOTP,
   generateOTPToken,
   generateRefreshAndAccessToken,
-  isPasswordCorrect,
+  isBcryptHashCorrect,
+  JWTTokenVerifier,
 } from "../../utils/controllers/index.js";
 import {
   createEmailTemplate,
@@ -62,7 +70,7 @@ const registerUser = apiHandler(async (req, res, next) => {
   const hashedPassword = await generateHashCode(password);
 
   const newUser = await createUser({ ...data, password: hashedPassword });
-  await createAuth({user: newUser.id});
+  await createAuth({ user: newUser.id });
 
   req.user = newUser;
   return next();
@@ -103,6 +111,42 @@ const sendOTP = apiHandler(async (req, res) => {
   });
 });
 
+const verifyOTP = apiHandler(async (req, res, next) => {
+  const { otp, otptoken } = await verifyOTPValidator.validateAsync({
+    ...req.body,
+    otptoken: req.cookies.otptoken,
+  });
+
+  const payload = JWTTokenVerifier(otptoken);
+
+  if (!payload) {
+    return next(new ErrorHandlerClass(OTP_EXPIRED, 400));
+  }
+
+  const userAuth = await getAuth({ user: payload.userId });
+
+  const isOTPCorrect = await isBcryptHashCorrect({
+    plainText: otp,
+    hashedText: userAuth.otp as string,
+  });
+
+  if (!isOTPCorrect) {
+    return next(new ErrorHandlerClass(INCORRECT_OTP, 400));
+  }
+
+  await updateAuth({
+    user: userAuth.user,
+    otp: null,
+    otpToken: null,
+    verified: true,
+  });
+
+  return ok({
+    res,
+    message: USER_VERIFIED,
+  });
+});
+
 const loginUser = apiHandler(async (req, res, next) => {
   const { email, password } = await loginValidator.validateAsync(req.body);
 
@@ -118,23 +162,28 @@ const loginUser = apiHandler(async (req, res, next) => {
     return next(new ErrorHandlerClass(USER_NOT_EXIST, 401));
   }
 
-  const passwordStatus = await isPasswordCorrect({plainPassword:password, hashedPassword:user.password});
+  const passwordStatus = await isBcryptHashCorrect({
+    plainText: password,
+    hashedText: user.password,
+  });
 
-  if(!passwordStatus){
+  if (!passwordStatus) {
     return next(new ErrorHandlerClass(PASSWORD_INCORRECT, 400));
   }
 
-  const { accessToken, refreshToken } = await generateRefreshAndAccessToken({authId: userAuth.id, userId: user.id});
+  const { accessToken, refreshToken } = await generateRefreshAndAccessToken({
+    authId: userAuth.id,
+    userId: user.id,
+  });
 
-  res
-  .cookie(ACCESS_TOKEN_NAME, accessToken, accessCookieOptions);
+  res.cookie(ACCESS_TOKEN_NAME, accessToken, accessCookieOptions);
 
-  await updateAuth({user: user.id, refreshToken});
+  await updateAuth({ user: user.id, refreshToken });
 
   return ok({
     res,
-    message: USER_LOGIN_MESSAGE
+    message: USER_LOGIN_MESSAGE,
   });
 });
 
-export { registerUser, loginUser, sendOTP };
+export { registerUser, loginUser, sendOTP, verifyOTP };

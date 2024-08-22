@@ -5,7 +5,7 @@ import { getUser, getAuth, updateUser } from "../db/services/index.js";
 import {
   IsUserValidWithEmailAndUsernameType,
   MailTemplateType,
-} from "src/types/controllers/auth.js";
+} from "../types/controllers/auth.js";
 
 // TODO: Registration logic with email and username verification
 const isUserValidWithEmailAndUsername = async ({
@@ -28,16 +28,8 @@ const isUserValidWithEmailAndUsername = async ({
     result.isUserExist = true;
     result.userId = user.id;
   } else {
-    const userWithUsername = await getUser({ username });
-
-    if (userWithUsername) {
-      const usernameAuth = await getAuth({ user: userWithUsername.id });
-      if (usernameAuth) {
-        const hash = await generateHashCode(username);
-        await updateUser({ id: userWithUsername.id, username: hash });
-      }
-    }
-
+    await validateUsername({ username });
+    result.isUsernameValid = true;
     return result;
   }
 
@@ -52,12 +44,34 @@ const isUserValidWithEmailAndUsername = async ({
 
   if (
     !userWithUsername ||
-    (user && userAuth && userWithUsername.email === user.email)
+    (user && userWithUsername && userWithUsername.email === user.email) ||
+    user.username.length > 16
   ) {
+    await validateUsername({ username });
     result.isUsernameValid = true;
   }
 
   return result;
+};
+
+const validateUsername = async ({
+  username,
+}: {
+  username: string;
+}): Promise<{ isUserExistWithUsername: boolean }> => {
+  const userWithUsername = await getUser({ username });
+
+  if (userWithUsername) {
+    const usernameAuth = await getAuth({ user: userWithUsername.id });
+    if (usernameAuth && !usernameAuth.verified) {
+      const hash = await generateHashCode(username);
+      await updateUser({ id: userWithUsername.id, username: hash });
+    }
+  }
+
+  return {
+    isUserExistWithUsername: userWithUsername ? true : false,
+  };
 };
 
 const createEmailTemplate = ({

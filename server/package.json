@@ -2,7 +2,7 @@
   "name": "workbee",
   "version": "1.0.0",
   "description": "A decentralize web app based on solana network",
-  "main": "src/app.ts",
+  "main": "./dist/src/server.js",
   "type": "module",
   "scripts": {
     "start": "tsc && node --env-file=.env ./dist/src/server.js",

@@ -6,6 +6,7 @@ import {
 } from "../../config/index.js";
 import jwt from "jsonwebtoken";
 import { COOKIE_AGE_15_DAY, COOKIE_AGE_3_DAY } from "../../constants/index.js";
+import { JWTTokenVerifierType } from "../../types/controllers/auth.js";
 
 const generateHashCode = async (str: string): Promise<string> => {
   const hashedString = await bcrypt.hash(str, BCRYPT_SALT_ROUND);
@@ -53,20 +54,29 @@ const generateRefreshAndAccessToken = async ({
   };
 };
 
-const isPasswordCorrect = async ({
-  plainPassword,
-  hashedPassword,
+const isBcryptHashCorrect = async ({
+  plainText,
+  hashedText,
 }: {
-  plainPassword: string;
-  hashedPassword: string;
+  plainText: string;
+  hashedText: string;
 }): Promise<boolean> => {
-  return await bcrypt.compare(plainPassword, hashedPassword);
+  return await bcrypt.compare(plainText, hashedText);
+};
+
+const JWTTokenVerifier = (token: string): JWTTokenVerifierType | null => {
+  try {
+    return jwt.verify(token, JWT_SECRET as string) as JWTTokenVerifierType;
+  } catch (err) {
+    return null;
+  }
 };
 
 export {
   generateHashCode,
   generateOTP,
   generateOTPToken,
-  isPasswordCorrect,
+  isBcryptHashCorrect,
   generateRefreshAndAccessToken,
+  JWTTokenVerifier,
 };

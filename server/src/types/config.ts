@@ -1,11 +1,7 @@
-interface SendEmailOTPType{
-    to: [string],
-    subject: string,
-    html: string
+interface SendEmailOTPType {
+  to: [string];
+  subject: string;
+  html: string;
 }
 
-
-
-export type {
-    SendEmailOTPType
-}
+export type { SendEmailOTPType };

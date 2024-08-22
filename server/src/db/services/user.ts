@@ -29,14 +29,20 @@ const updateUser = async (newData: UpdateUserType): Promise<UserTableType> => {
   return user[0];
 };
 
-const getUser = async ({ id, email, username }: GetUserType): Promise<UserTableType> => {
-  const user = await DB.select().from(UserTable).where(
-    or(
-      id? eq(UserTable.id, id) : undefined,
-      email? eq(UserTable.email, email) : undefined,
-      username? eq(UserTable.username, username) : undefined,
-    )
-  );
+const getUser = async ({
+  id,
+  email,
+  username,
+}: GetUserType): Promise<UserTableType> => {
+  const user = await DB.select()
+    .from(UserTable)
+    .where(
+      or(
+        id ? eq(UserTable.id, id) : undefined,
+        email ? eq(UserTable.email, email) : undefined,
+        username ? eq(UserTable.username, username) : undefined
+      )
+    );
   return user[0];
 };
 

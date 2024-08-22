@@ -7,5 +7,5 @@ export default {
   dialect: "postgresql",
   dbCredentials: {
     url: DB_URL,
-  }
+  },
 };

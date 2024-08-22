@@ -4,7 +4,7 @@ import {
   NODE_MAILER_PASS,
   SEND_EMAIL_FROM,
 } from "./env.vars.js";
-import { SendEmailOTPType } from "src/types/config.js";
+import { SendEmailOTPType } from "../types/config.js";
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -25,6 +25,4 @@ const sendEmailOTP = async ({ to, subject, html }: SendEmailOTPType) => {
   });
 };
 
-export {
-    sendEmailOTP
-}
+export { sendEmailOTP };

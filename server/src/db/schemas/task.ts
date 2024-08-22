@@ -20,9 +20,10 @@ export const TaskTable = pgTable("task", {
     .notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   description: varchar("description", { length: 255 }).notNull(),
-  category: integer("category").references(() => CategoryTable.id).notNull(),
-  participants: integer("participants")
-    .array().default([]),
+  category: integer("category")
+    .references(() => CategoryTable.id)
+    .notNull(),
+  participants: integer("participants").array().default([]),
   prizeAmount: integer("prizeAmount").notNull(),
   isCompleted: boolean("isCompleted").notNull().default(false),
   status: statusEnum("status").notNull(),

@@ -1,26 +1,20 @@
 // EXPORTING AFTER IMPORT
 export * from "./env.vars.js";
 export * from "./db.connection.js";
-export * from "./send-email.js"
-
-
-
+export * from "./send-email.js";
 
 // CORS CONF
 const whitelist = [`*`];
 
 const corsOptions = {
-    origin: function (origin: any, callback: any) {
-        if (whitelist.indexOf(origin) !== -1 || !origin) {
-            callback(null, true);
-        } else {
-            callback(new Error('You are very chalak bro.....'));
-        }
-    },
-    credentials: true
+  origin: function (origin: any, callback: any) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("You are very chalak bro....."));
+    }
+  },
+  credentials: true,
 };
 
-
-export {
-    corsOptions,
-}
+export { corsOptions };

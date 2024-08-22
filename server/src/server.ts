@@ -18,8 +18,6 @@ if (cluster.isPrimary) {
   });
 } else {
   app.listen(APP_PORT || 8080, () => {
-    console.log(
-      `Server running at PORT ${APP_PORT} with PID ${process.pid}`
-    );
+    console.log(`Server running at PORT ${APP_PORT} with PID ${process.pid}`);
   });
 }

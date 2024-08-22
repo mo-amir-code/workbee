@@ -1,19 +1,20 @@
-import Joi from "joi"
+import Joi from "joi";
 
 const loginValidator = Joi.object({
-    email: Joi.string().email().lowercase().required(),
-    password: Joi.string().min(6).max(12).required()
+  email: Joi.string().email().lowercase().required(),
+  password: Joi.string().min(6).max(12).required(),
 });
 
 const registerValidator = Joi.object({
-    name: Joi.string().min(3).required(),
-    username: Joi.string().min(3).required(),
-    email: Joi.string().email().lowercase().required(),
-    password: Joi.string().min(6).max(12).required()
+  name: Joi.string().min(3).required(),
+  username: Joi.string().min(3).required(),
+  email: Joi.string().email().lowercase().required(),
+  password: Joi.string().min(6).max(12).required(),
 });
 
+const verifyOTPValidator = Joi.object({
+  otp: Joi.string().min(6).max(8).required(),
+  otptoken: Joi.string().min(16).required(),
+});
 
-export {
-    loginValidator,
-    registerValidator
-}
+export { loginValidator, registerValidator, verifyOTPValidator };

@@ -46,5 +46,4 @@ export const taskSubmitRelations = relations(TaskSubmitTable, ({ one }) => ({
   }),
 }));
 
-
 export type TaskSubmit = InferSelectModel<typeof TaskSubmitTable>;

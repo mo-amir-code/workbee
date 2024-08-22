@@ -12,26 +12,25 @@ const ROOT_DOMAIN = process.env.ROOT_DOMAIN;
 //  <---- Constants for configurations only ---->
 
 // Email Realated Constants
-const SEND_EMAIL_FROM = "noreply@workbee.xyz"
+const SEND_EMAIL_FROM = "noreply@workbee.xyz";
 const BCRYPT_SALT_ROUND = 12;
-const OTP_TOKEN_AGE = "15m"
+const OTP_TOKEN_AGE = "15m";
 
 // COMPANY RELATED
 const COMPANY_NAME = "WorkBee";
 
-
 export {
-    APP_PORT,
-    DB_URL,
-    ENVIRONMENT,
-    REDIS_URI,
-    NODE_MAILER_EMAIL,
-    NODE_MAILER_PASS,
-    SEND_EMAIL_FROM,
-    BCRYPT_SALT_ROUND,
-    JWT_SECRET,
-    OTP_TOKEN_AGE,
-    COMPANY_NAME,
-    CLIENT_ORIGIN,
-    ROOT_DOMAIN
-}
+  APP_PORT,
+  DB_URL,
+  ENVIRONMENT,
+  REDIS_URI,
+  NODE_MAILER_EMAIL,
+  NODE_MAILER_PASS,
+  SEND_EMAIL_FROM,
+  BCRYPT_SALT_ROUND,
+  JWT_SECRET,
+  OTP_TOKEN_AGE,
+  COMPANY_NAME,
+  CLIENT_ORIGIN,
+  ROOT_DOMAIN,
+};
