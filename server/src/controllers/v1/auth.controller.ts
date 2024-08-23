@@ -1,8 +1,10 @@
 import { CLIENT_ORIGIN, sendEmailOTP } from "../../config/index.js";
 import { apiHandler, ErrorHandlerClass, ok } from "../..//middlewares/index.js";
 import {
+  forgotPasswordValidator,
   loginValidator,
   registerValidator,
+  resetPasswordValidator,
   verifyOTPValidator,
 } from "../../vaildators/index.js";
 import {
@@ -16,6 +18,9 @@ import {
 import {
   ACCESS_TOKEN_NAME,
   accessCookieOptions,
+  ERROR_HAPPENED,
+  FORGOT_PASSWORD_REQUEST_MESSAGE,
+  FORGOT_PASSWORD_REQUEST_SUBJECT,
   INCORRECT_OTP,
   OTP_EXPIRED,
   OTP_EXPIRY_IN_MINUTES,
@@ -23,6 +28,7 @@ import {
   OTP_TOKEN_NAME,
   otpTokenCookieOptions,
   PASSWORD_INCORRECT,
+  PASSWORD_RESET,
   USER_ALREADY_EXIST,
   USER_LOGIN_MESSAGE,
   USER_NOT_EXIST,
@@ -77,7 +83,9 @@ const registerUser = apiHandler(async (req, res, next) => {
 });
 
 const sendOTP = apiHandler(async (req, res) => {
+  console.log("User: ", req.user);
   const userAuth = await getAuth({ user: req.user.id });
+  console.log("User AUth: ", userAuth);
 
   const otp: number = generateOTP();
   const otpToken: string = await generateOTPToken({
@@ -85,17 +93,35 @@ const sendOTP = apiHandler(async (req, res) => {
     userId: userAuth.user,
   });
 
-  const mailOption: SendEmailOTPType = {
-    to: [req.user.email],
-    subject: USER_REGISTRATION_EMAIL_SUBJECT,
-    html: createEmailTemplate({
-      otp,
-      expireTime: OTP_EXPIRY_IN_MINUTES,
-      message: USER_REGISTRATION_MESSAGE,
-      name: (req.user as UserTableType).name,
-      link: `${CLIENT_ORIGIN}/auth/verify?token=${otpToken}`,
-    }),
-  };
+  let mailOption: SendEmailOTPType;
+
+  switch (req.from) {
+    case "forgot-password":
+      mailOption = {
+        to: [req.user.email],
+        subject: FORGOT_PASSWORD_REQUEST_SUBJECT,
+        html: createEmailTemplate({
+          otp,
+          expireTime: OTP_EXPIRY_IN_MINUTES,
+          message: FORGOT_PASSWORD_REQUEST_MESSAGE,
+          name: (req.user as UserTableType).name,
+          link: `${CLIENT_ORIGIN}/auth/verify?token=${otpToken}`,
+        }),
+      };
+      break;
+    default:
+      mailOption = {
+        to: [req.user.email],
+        subject: USER_REGISTRATION_EMAIL_SUBJECT,
+        html: createEmailTemplate({
+          otp,
+          expireTime: OTP_EXPIRY_IN_MINUTES,
+          message: USER_REGISTRATION_MESSAGE,
+          name: (req.user as UserTableType).name,
+          link: `${CLIENT_ORIGIN}/auth/verify?token=${otpToken}`,
+        }),
+      };
+  }
 
   await sendEmailOTP(mailOption);
 
@@ -148,9 +174,11 @@ const verifyOTP = apiHandler(async (req, res, next) => {
 });
 
 const loginUser = apiHandler(async (req, res, next) => {
-  const { email, password } = await loginValidator.validateAsync(req.body);
+  const { email, username, password } = await loginValidator.validateAsync(
+    req.body
+  );
 
-  const user = await getUser({ email });
+  const user = await getUser(email ? { email } : { username });
 
   if (!user) {
     return next(new ErrorHandlerClass(USER_NOT_EXIST, 401));
@@ -186,4 +214,66 @@ const loginUser = apiHandler(async (req, res, next) => {
   });
 });
 
-export { registerUser, loginUser, sendOTP, verifyOTP };
+const forgotPassword = apiHandler(async (req, res, next) => {
+  const { email, username } = await forgotPasswordValidator.validateAsync(
+    req.body
+  );
+
+  const user = await getUser(email ? { email } : { username });
+
+  if (!user) {
+    return next(new ErrorHandlerClass(USER_NOT_EXIST, 400));
+  }
+
+  req.user = user;
+  req.from = "forgot-password";
+  next();
+});
+
+const resetPassword = apiHandler(async (req, res, next) => {
+  const { otp, otptoken, newPassword } =
+    await resetPasswordValidator.validateAsync({
+      ...req.body,
+      otptoken: req.body.otptoken || req.cookies.otptoken,
+    });
+
+  const jwtPayload = JWTTokenVerifier(otptoken);
+
+  if (!jwtPayload) {
+    return next(new ErrorHandlerClass(OTP_EXPIRED, 401));
+  }
+
+  const userAuth = await getAuth({ user: jwtPayload.userId });
+
+  if (!userAuth) {
+    return next(new ErrorHandlerClass(ERROR_HAPPENED, 400));
+  }
+
+  const isOTPCorrect = await isBcryptHashCorrect({
+    plainText: otp,
+    hashedText: userAuth.otp as string,
+  });
+
+  if (!isOTPCorrect) {
+    return next(new ErrorHandlerClass(INCORRECT_OTP, 400));
+  }
+
+  const hashedPassword = await generateHashCode(newPassword);
+
+  await updateUser({ id: userAuth.user, password: hashedPassword });
+  await updateAuth({ user: userAuth.user, otp: null, otpToken: null });
+
+  return ok({
+    res,
+    message: PASSWORD_RESET,
+  });
+});
+
+export {
+  registerUser,
+  loginUser,
+  sendOTP,
+  verifyOTP,
+  forgotPassword,
+  resetPassword,
+};

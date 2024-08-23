@@ -7,7 +7,6 @@ import {
   MailTemplateType,
 } from "../types/controllers/auth.js";
 
-// TODO: Registration logic with email and username verification
 const isUserValidWithEmailAndUsername = async ({
   username,
   email,

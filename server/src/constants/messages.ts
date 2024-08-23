@@ -14,9 +14,14 @@ const USER_LOGIN_MESSAGE = "Logged In";
 const OTP_EXPIRED = "OTP expired";
 const INCORRECT_OTP = "OTP is incorrect";
 const USER_VERIFIED = "Verified";
+const ERROR_HAPPENED = "something went wrong";
+const PASSWORD_RESET = "password reset"
 
 // EMAIL Related
 const USER_REGISTRATION_EMAIL_SUBJECT = "OTP To Verify Your Account";
+const FORGOT_PASSWORD_REQUEST_SUBJECT= "Your One-Time Password (OTP) for reset your account"
+const FORGOT_PASSWORD_REQUEST_MESSAGE =
+  "OTP To Reset Your Account Password";
 
 export {
   REMOVE_USER_SAVED_TASK,
@@ -33,4 +38,8 @@ export {
   OTP_EXPIRED,
   INCORRECT_OTP,
   USER_VERIFIED,
+  FORGOT_PASSWORD_REQUEST_MESSAGE,
+  FORGOT_PASSWORD_REQUEST_SUBJECT,
+  ERROR_HAPPENED,
+  PASSWORD_RESET
 };
