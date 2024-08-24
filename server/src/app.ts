@@ -5,15 +5,30 @@ import cookieParser from "cookie-parser";
 import { errorHandler } from "./middlewares/error.handler.js";
 import helmet from "helmet";
 import routes from "./routes/index.js";
+import { ApolloServer } from "@apollo/server";
+import { expressMiddleware } from "@apollo/server/express4";
+import { gqlResolvers, gqlSchema } from "./graphql/index.js";
+
 
 const app: Express = express();
 
-app.use(helmet());
-app.use(cors(corsOptions));
+// app.use(helmet());
+// app.use(cors(corsOptions));
 app.use(cookieParser());
-app.use(express.json({ limit: "16kb" }));
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// REST API's
 app.use("/api", routes);
 app.use(errorHandler);
+
+// GraphQL API'S
+async function graphQLServer(){
+    const apolloServer = new ApolloServer({ typeDefs: gqlSchema, resolvers: gqlResolvers });
+    await apolloServer.start();
+    app.use("/graphql", expressMiddleware(apolloServer));
+}
+graphQLServer();
+
 
 export default app;
