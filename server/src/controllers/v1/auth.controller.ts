@@ -51,6 +51,7 @@ import {
 } from "../../services/index.js";
 import { SendEmailOTPType } from "../../types/config.js";
 import { UserTableType } from "../../types/db-services/index.js";
+import logger from "../../../logger.js";
 
 const registerUser = apiHandler(async (req, res, next) => {
   const data = await registerValidator.validateAsync(req.body);
@@ -83,9 +84,9 @@ const registerUser = apiHandler(async (req, res, next) => {
 });
 
 const sendOTP = apiHandler(async (req, res) => {
-  console.log("User: ", req.user);
+  logger.info("User: ", req.user);
   const userAuth = await getAuth({ user: req.user.id });
-  console.log("User AUth: ", userAuth);
+  logger.info("User Auth: ", userAuth);
 
   const otp: number = generateOTP();
   const otpToken: string = await generateOTPToken({

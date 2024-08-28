@@ -1,5 +1,6 @@
 import { Redis } from "ioredis";
 import { ENVIRONMENT, REDIS_URI } from "./env.vars.js";
+import logger from "../../logger.js";
 
 let redis: Redis;
 
@@ -13,11 +14,11 @@ if (ENVIRONMENT === "development") {
 }
 
 redis.on("connect", () => {
-  console.log("Redis connected....!");
+  logger.info("Redis connected....!");
 });
 
 redis.on("error", (err) => {
-  console.error("Redis Error: ", err);
+  logger.error("Redis Error: ", err);
 });
 
 export { redis };
