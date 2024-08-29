@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { APIHandlerType, APISuccessType } from "../types/middlewares/index.js";
+import logger from "../../logger.js";
 
 class ErrorHandlerClass extends Error {
   constructor(
@@ -25,6 +26,8 @@ const errorHandler = async (
     err.message ||= "Internal Server Error";
     err.statusCode ||= 500;
   }
+
+  logger.error(err.message);
 
   return res.status(err.statusCode).json({
     success: false,

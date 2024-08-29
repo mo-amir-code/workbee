@@ -23,6 +23,12 @@ const FORGOT_PASSWORD_REQUEST_SUBJECT= "Your One-Time Password (OTP) for reset y
 const FORGOT_PASSWORD_REQUEST_MESSAGE =
   "OTP To Reset Your Account Password";
 
+
+// Task Controller
+const LATEST_TASKS_MESSAGE = "Latest tasks fetched";
+const MOST_PAYING_TASKS_MESSAGE = "Most paying tasks fetched";
+const FILTER_TASKS_MESSAGE = "Task filtered";
+
 export {
   REMOVE_USER_SAVED_TASK,
   USER_ALREADY_EXIST,
@@ -41,5 +47,8 @@ export {
   FORGOT_PASSWORD_REQUEST_MESSAGE,
   FORGOT_PASSWORD_REQUEST_SUBJECT,
   ERROR_HAPPENED,
-  PASSWORD_RESET
+  PASSWORD_RESET,
+  MOST_PAYING_TASKS_MESSAGE,
+  LATEST_TASKS_MESSAGE,
+  FILTER_TASKS_MESSAGE
 };

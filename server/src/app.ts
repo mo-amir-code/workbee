@@ -10,6 +10,7 @@ import { expressMiddleware } from "@apollo/server/express4";
 import { gqlResolvers, gqlSchema } from "./graphql/index.js";
 import logger, { morganFormat } from "../logger.js";
 import morgan from "morgan";
+import { main } from "./dummy/index.js";
 
 const app: Express = express();
 
@@ -35,6 +36,8 @@ app.use(
     },
   })
 );
+
+main()
 
 // REST API's
 app.use("/api", routes);
