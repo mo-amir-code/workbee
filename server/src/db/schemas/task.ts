@@ -10,7 +10,7 @@ import {
 import { InferSelectModel, relations } from "drizzle-orm";
 import { UserTable, CategoryTable, TaskSubmitTable } from "./index.js";
 
-export const statusEnum = pgEnum("status", ["draft", "published"]);
+export const statusEnum = pgEnum("taskStatus", ["draft", "published"]);
 
 export const TaskTable = pgTable("task", {
   id: serial("id").primaryKey(),
@@ -19,14 +19,14 @@ export const TaskTable = pgTable("task", {
     .references(() => UserTable.id)
     .notNull(),
   title: varchar("title", { length: 255 }).notNull(),
-  description: varchar("description", { length: 255 }).notNull(),
+  description: varchar("description").notNull(),
   category: integer("category")
     .references(() => CategoryTable.id)
     .notNull(),
   participants: integer("participants").array().default([]),
   prizeAmount: integer("prizeAmount").notNull(),
   isCompleted: boolean("isCompleted").notNull().default(false),
-  status: statusEnum("status").notNull(),
+  taskStatus: statusEnum("taskStatus").notNull().default("draft"),
   completer: integer("completer").references(() => UserTable.id),
   expiryTime: timestamp("expiryTime").notNull(),
   createdAt: timestamp("createdAt").notNull().defaultNow(),

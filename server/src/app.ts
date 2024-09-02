@@ -10,7 +10,7 @@ import { expressMiddleware } from "@apollo/server/express4";
 import { gqlResolvers, gqlSchema } from "./graphql/index.js";
 import logger, { morganFormat } from "../logger.js";
 import morgan from "morgan";
-import { main } from "./dummy/index.js";
+import { isUserAuthenticated } from "./middlewares/user.middleware.js";
 
 const app: Express = express();
 
@@ -37,11 +37,8 @@ app.use(
   })
 );
 
-main()
-
 // REST API's
 app.use("/api", routes);
-app.use(errorHandler);
 
 // GraphQL API'S
 async function graphQLServer() {
@@ -50,8 +47,10 @@ async function graphQLServer() {
     resolvers: gqlResolvers,
   });
   await apolloServer.start();
-  app.use("/graphql", expressMiddleware(apolloServer));
+  app.use("/graphql", isUserAuthenticated, expressMiddleware(apolloServer));
 }
 graphQLServer();
+
+app.use(errorHandler);
 
 export default app;

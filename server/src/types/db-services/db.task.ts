@@ -4,7 +4,7 @@ interface CreateTaskType {
   description: string;
   category: number;
   prizeAmount: number;
-  status: "draft" | "published";
+  taskStatus: "draft" | "published";
   expiryTime: Date;
 }
 

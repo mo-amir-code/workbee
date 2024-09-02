@@ -29,6 +29,17 @@ const LATEST_TASKS_MESSAGE = "Latest tasks fetched";
 const MOST_PAYING_TASKS_MESSAGE = "Most paying tasks fetched";
 const FILTER_TASKS_MESSAGE = "Task filtered";
 
+
+// Middlewares
+const NOT_AUTHORIZED = "Unauthorized user";
+const INVALID_TOKEN = "Invalid token";
+
+// User Controller
+const NEW_TASK_CREATED_MESSAGE = "Task created";
+
+// Category Controller
+const NEW_CATEGORY_CREATED_MESSAGE = "Category created";
+
 export {
   REMOVE_USER_SAVED_TASK,
   USER_ALREADY_EXIST,
@@ -50,5 +61,9 @@ export {
   PASSWORD_RESET,
   MOST_PAYING_TASKS_MESSAGE,
   LATEST_TASKS_MESSAGE,
-  FILTER_TASKS_MESSAGE
+  FILTER_TASKS_MESSAGE,
+  NOT_AUTHORIZED,
+  INVALID_TOKEN,
+  NEW_TASK_CREATED_MESSAGE,
+  NEW_CATEGORY_CREATED_MESSAGE
 };

@@ -25,7 +25,7 @@ export const TaskSubmitTable = pgTable("taskSubmit", {
   task: integer("task")
     .references(() => TaskTable.id)
     .notNull(),
-  coverLetter: varchar("coverLetter", { length: 255 }).notNull(),
+  coverLetter: varchar("coverLetter").notNull(),
   credentials: varchar("credentials").notNull(),
   status: taskSubmitStatusEnum("status").notNull().default("pending"),
   solanaWalletAddress: varchar("solanaWalletAddress", {
